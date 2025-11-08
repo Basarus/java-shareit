@@ -17,7 +17,6 @@ public class ItemRequestController {
         return dto;
     }
 
-
     @GetMapping
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
     public List<ItemRequestDto> my(@RequestHeader("X-Sharer-User-Id") Long userId) {

@@ -12,7 +12,10 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private final UserService service;
-    public UserController(UserService service) { this.service = service; }
+
+    public UserController(UserService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public ResponseEntity<UserDto> create(@Valid @RequestBody UserDto dto) {
@@ -25,10 +28,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDto get(@PathVariable Long id) { return service.get(id); }
+    public UserDto get(@PathVariable Long id) {
+        return service.get(id);
+    }
 
     @GetMapping
-    public List<UserDto> all() { return service.getAll(); }
+    public List<UserDto> all() {
+        return service.getAll();
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

@@ -22,8 +22,7 @@ public class UserServiceImpl implements UserService {
         if (dto == null) throw new BadRequestException("body must not be null");
         if (dto.getEmail() == null || dto.getEmail().isBlank())
             throw new BadRequestException("email must not be blank");
-        if (!dto.getEmail().contains("@"))
-            throw new BadRequestException("email must be valid");
+        if (!dto.getEmail().contains("@")) throw new BadRequestException("email must be valid");
         requireEmailUnique(dto.getEmail(), null);
 
         Long id = seq.incrementAndGet();
@@ -39,16 +38,13 @@ public class UserServiceImpl implements UserService {
         if (u == null) throw new NotFoundException("User not found: " + userId);
 
         if (patch.getEmail() != null) {
-            if (patch.getEmail().isBlank())
-                throw new BadRequestException("email must not be blank");
-            if (!patch.getEmail().contains("@"))
-                throw new BadRequestException("email must be valid");
+            if (patch.getEmail().isBlank()) throw new BadRequestException("email must not be blank");
+            if (!patch.getEmail().contains("@")) throw new BadRequestException("email must be valid");
             requireEmailUnique(patch.getEmail(), userId);
             u.setEmail(patch.getEmail());
         }
         if (patch.getName() != null) {
-            if (patch.getName().isBlank())
-                throw new BadRequestException("name must not be blank");
+            if (patch.getName().isBlank()) throw new BadRequestException("name must not be blank");
             u.setName(patch.getName());
         }
         return UserMapper.toDto(u);
@@ -77,8 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void requireEmailUnique(String email, Long selfId) {
-        boolean clash = storage.values().stream()
-                .anyMatch(u -> u.getEmail().equalsIgnoreCase(email) && !Objects.equals(u.getId(), selfId));
+        boolean clash = storage.values().stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(email) && !Objects.equals(u.getId(), selfId));
         if (clash) throw new ConflictException("Email already exists: " + email);
     }
 }
