@@ -59,7 +59,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll() {
-        return storage.values().stream().map(UserMapper::toDto).toList();
+        return storage.values().stream()
+                .map(UserMapper::toDto)
+                .toList();
     }
 
     @Override
@@ -73,7 +75,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private void requireEmailUnique(String email, Long selfId) {
-        boolean clash = storage.values().stream().anyMatch(u -> u.getEmail().equalsIgnoreCase(email) && !Objects.equals(u.getId(), selfId));
+        boolean clash = storage.values().stream()
+                .anyMatch(u -> u.getEmail()
+                        .equalsIgnoreCase(email) && !Objects.equals(u.getId(), selfId));
         if (clash) throw new ConflictException("Email already exists: " + email);
     }
 }

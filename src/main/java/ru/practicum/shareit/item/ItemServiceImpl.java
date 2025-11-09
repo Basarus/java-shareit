@@ -69,14 +69,28 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getByOwner(Long ownerId) {
         requireUserHeader(ownerId);
-        return storage.values().stream().filter(i -> Objects.equals(i.getOwner(), ownerId)).sorted(Comparator.comparing(Item::getId)).map(ItemMapper::toDto).toList();
+        return storage.values().stream()
+                .filter(i -> Objects.equals(i.getOwner(), ownerId))
+                .sorted(Comparator.comparing(Item::getId))
+                .map(ItemMapper::toDto)
+                .toList();
     }
 
     @Override
     public List<ItemDto> search(Long requesterId, String text) {
         if (text == null || text.isBlank()) return List.of();
         String q = text.toLowerCase();
-        return storage.values().stream().filter(Item::getAvailable).filter(i -> i.getName().toLowerCase().contains(q) || i.getDescription().toLowerCase().contains(q)).sorted(Comparator.comparing(Item::getId)).map(ItemMapper::toDto).toList();
+        return storage.values().stream()
+                .filter(Item::getAvailable)
+                .filter(i -> i.getName()
+                        .toLowerCase()
+                        .contains(q)
+                        || i.getDescription()
+                        .toLowerCase()
+                        .contains(q))
+                .sorted(Comparator.comparing(Item::getId))
+                .map(ItemMapper::toDto)
+                .toList();
     }
 
     private void requireUserHeader(Long userId) {

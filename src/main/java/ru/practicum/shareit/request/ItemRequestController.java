@@ -23,13 +23,11 @@ public class ItemRequestController {
         return List.of();
     }
 
-
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
     public List<ItemRequestDto> all(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return List.of();
     }
-
 
     @GetMapping("/{requestId}")
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)

@@ -16,20 +16,17 @@ public class BookingController {
         return dto;
     }
 
-
     @PatchMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
     public BookingDto approve(@RequestHeader("X-Sharer-User-Id") Long ownerId, @PathVariable Long bookingId, @RequestParam boolean approved) {
         return new BookingDto();
     }
 
-
     @GetMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
     public BookingDto get(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long bookingId) {
         return new BookingDto();
     }
-
 
     @GetMapping
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
