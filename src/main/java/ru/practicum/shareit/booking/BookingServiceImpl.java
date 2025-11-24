@@ -8,6 +8,7 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.common.BadRequestException;
+import ru.practicum.shareit.common.ForbiddenException;
 import ru.practicum.shareit.common.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
@@ -59,7 +60,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Бронирование не найдено: " + bookingId));
 
         if (!booking.getItem().getOwner().getId().equals(ownerId)) {
-            throw new NotFoundException("Бронирование не относится к вещам пользователя " + ownerId);
+            throw new ForbiddenException("Пользователь " + ownerId + " не является владельцем вещи");
         }
 
         if (booking.getStatus() != BookingStatus.WAITING) {
