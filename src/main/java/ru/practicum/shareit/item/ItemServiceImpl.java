@@ -68,7 +68,7 @@ public class ItemServiceImpl implements ItemService {
         requireUserHeader(ownerId);
         Item i = storage.get(itemId);
         if (i == null) throw new NotFoundException("Item not found: " + itemId);
-        if (!Objects.equals(i.getOwner(), ownerId))
+        if (!Objects.equals(i.getOwner().getId(), ownerId))
             throw new NotFoundException("Item not found for this owner: " + itemId);
         if (patch.getName() != null) {
             if (patch.getName().isBlank()) throw new BadRequestException("name must not be blank");
