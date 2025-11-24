@@ -3,7 +3,6 @@ package ru.practicum.shareit.request;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 import java.util.List;
