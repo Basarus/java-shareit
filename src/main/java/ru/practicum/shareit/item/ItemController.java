@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import jakarta.validation.Valid;
@@ -41,5 +42,10 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDto> search(@RequestHeader(value = "X-Sharer-User-Id", required = false) Long userId, @RequestParam String text) {
         return service.search(userId, text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId, @RequestBody CommentDto commentDto) {
+        return service.addComment(userId, itemId, commentDto);
     }
 }

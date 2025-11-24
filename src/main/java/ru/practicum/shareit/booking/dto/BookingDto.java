@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.dto;
 import lombok.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
 
@@ -27,4 +28,6 @@ public class BookingDto {
 
     @NotNull
     private Long bookerId;
+
+    private BookingStatus status;
 }
