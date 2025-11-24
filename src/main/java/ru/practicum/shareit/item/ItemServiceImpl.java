@@ -18,6 +18,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.model.User;
+import java.util.Objects;
 
 import java.time.LocalDateTime;
 
@@ -68,8 +69,11 @@ public class ItemServiceImpl implements ItemService {
         requireUserHeader(ownerId);
         Item i = storage.get(itemId);
         if (i == null) throw new NotFoundException("Item not found: " + itemId);
-        if (!Objects.equals(i.getOwner().getId(), ownerId))
+
+        if (!Objects.equals(i.getOwner().getId(), ownerId)) {
             throw new NotFoundException("Item not found for this owner: " + itemId);
+        }
+
         if (patch.getName() != null) {
             if (patch.getName().isBlank()) throw new BadRequestException("name must not be blank");
             i.setName(patch.getName());
@@ -78,10 +82,10 @@ public class ItemServiceImpl implements ItemService {
             if (patch.getDescription().isBlank()) throw new BadRequestException("description must not be blank");
             i.setDescription(patch.getDescription());
         }
-        ;
         if (patch.getAvailable() != null) {
             i.setAvailable(patch.getAvailable());
         }
+
         return ItemMapper.toDto(i);
     }
 
