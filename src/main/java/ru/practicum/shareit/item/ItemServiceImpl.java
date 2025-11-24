@@ -16,7 +16,6 @@ import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
-import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -28,18 +27,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class ItemServiceImpl implements ItemService {
+
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
-    private final UserService users;
 
-    public ItemServiceImpl(UserService users,
-                           ItemRepository itemRepository,
+    public ItemServiceImpl(ItemRepository itemRepository,
                            UserRepository userRepository,
                            CommentRepository commentRepository,
                            BookingRepository bookingRepository) {
-        this.users = users;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
@@ -50,9 +47,6 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto create(Long ownerId, ItemDto dto) {
         requireUserHeader(ownerId);
 
-        if (!users.exists(ownerId)) {
-            throw new NotFoundException("Owner not found: " + ownerId);
-        }
         if (dto == null) {
             throw new BadRequestException("body must not be null");
         }
@@ -80,10 +74,10 @@ public class ItemServiceImpl implements ItemService {
         requireUserHeader(ownerId);
 
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Item not found: " + itemId));
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена: " + itemId));
 
         if (!Objects.equals(item.getOwner().getId(), ownerId)) {
-            throw new NotFoundException("Item not found for this owner: " + itemId);
+            throw new NotFoundException("Вещь не найдена: " + itemId);
         }
 
         if (patch.getName() != null) {
@@ -110,6 +104,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto get(Long requesterId, Long itemId) {
+        requireUserHeader(requesterId);
+
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена: " + itemId));
 
@@ -120,7 +116,7 @@ public class ItemServiceImpl implements ItemService {
         BookingShortDto lastBooking = null;
         BookingShortDto nextBooking = null;
 
-        if (item.getOwner().getId().equals(requesterId)) {
+        if (Objects.equals(item.getOwner().getId(), requesterId)) {
             List<Booking> bookings = bookingRepository.findByItem_IdOrderByStartDesc(itemId);
             LocalDateTime now = LocalDateTime.now();
 
@@ -144,6 +140,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getByOwner(Long ownerId) {
+        requireUserHeader(ownerId);
+
         List<Item> items = itemRepository.findByOwner_Id(ownerId);
         if (items.isEmpty()) {
             return List.of();
@@ -199,11 +197,15 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> search(Long requesterId, String text) {
+        requireUserHeader(requesterId);
+
         if (text == null || text.isBlank()) {
             return List.of();
         }
 
-        return itemRepository.search(text).stream()
+        List<Item> items = itemRepository.search(text);
+
+        return items.stream()
                 .filter(Item::getAvailable)
                 .map(ItemMapper::toDto)
                 .collect(Collectors.toList());
@@ -211,6 +213,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto addComment(Long userId, Long itemId, CommentDto commentDto) {
+        requireUserHeader(userId);
+
         if (commentDto.getText() == null || commentDto.getText().isBlank()) {
             throw new BadRequestException("Комментарий не может быть пустым");
         }
