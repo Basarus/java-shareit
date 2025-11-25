@@ -36,9 +36,11 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException("Дата окончания должна быть позже даты начала");
         }
 
-        User booker = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
+        User booker = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
 
-        Item item = itemRepository.findById(dto.getItemId()).orElseThrow(() -> new NotFoundException("Вещь не найдена: " + dto.getItemId()));
+        Item item = itemRepository.findById(dto.getItemId())
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена: " + dto.getItemId()));
 
         if (Boolean.FALSE.equals(item.getAvailable())) {
             throw new BadRequestException("Вещь недоступна для бронирования");
@@ -57,7 +59,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto approve(Long ownerId, Long bookingId, boolean approved) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Бронирование не найдено: " + bookingId));
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Бронирование не найдено: " + bookingId));
 
         if (!booking.getItem().getOwner().getId().equals(ownerId)) {
             throw new ForbiddenException("Пользователь " + ownerId + " не является владельцем вещи");
@@ -75,7 +78,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto get(Long userId, Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new NotFoundException("Бронирование не найдено: " + bookingId));
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Бронирование не найдено: " + bookingId));
 
         Long ownerId = booking.getItem().getOwner().getId();
         Long bookerId = booking.getBooker().getId();
@@ -89,7 +93,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getByBooker(Long userId, String state) {
-        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
 
         BookingState bookingState = BookingState.from(state);
         LocalDateTime now = LocalDateTime.now();
@@ -114,7 +119,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getByOwner(Long ownerId, String state) {
-        userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Пользователь не найден: " + ownerId));
+        userRepository.findById(ownerId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + ownerId));
 
         BookingState bookingState = BookingState.from(state);
         LocalDateTime now = LocalDateTime.now();
@@ -135,6 +141,8 @@ public class BookingServiceImpl implements BookingService {
             default -> throw new BadRequestException("Unknown state: " + state);
         }
 
-        return bookings.stream().map(BookingMapper::toDto).collect(Collectors.toList());
+        return bookings.stream()
+                .map(BookingMapper::toDto)
+                .collect(Collectors.toList());
     }
 }

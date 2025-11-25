@@ -15,13 +15,27 @@ public class BookingMapper {
     public static Booking toEntity(BookingDto dto, Item item, User booker) {
         if (dto == null) return null;
 
-        return Booking.builder().id(dto.getId()).start(dto.getStart()).end(dto.getEnd()).item(item).booker(booker).status(dto.getStatus()).build();
+        return Booking.builder()
+                .id(dto.getId())
+                .start(dto.getStart())
+                .end(dto.getEnd())
+                .item(item)
+                .booker(booker).
+                status(dto.getStatus())
+                .build();
     }
 
     public static BookingDto toDto(Booking booking) {
         if (booking == null) return null;
 
-        BookingDto dto = BookingDto.builder().id(booking.getId()).start(booking.getStart()).end(booking.getEnd()).status(booking.getStatus()).itemId(booking.getItem() != null ? booking.getItem().getId() : null).bookerId(booking.getBooker() != null ? booking.getBooker().getId() : null).build();
+        BookingDto dto = BookingDto.builder()
+                .id(booking.getId())
+                .start(booking.getStart())
+                .end(booking.getEnd())
+                .status(booking.getStatus())
+                .itemId(booking.getItem() != null ? booking.getItem().getId() : null)
+                .bookerId(booking.getBooker() != null ? booking.getBooker().getId() : null)
+                .build();
 
         if (booking.getItem() != null) {
             ItemDto itemDto = ItemMapper.toDto(booking.getItem());
@@ -39,6 +53,9 @@ public class BookingMapper {
     public static BookingShortDto toShortDto(Booking booking) {
         if (booking == null) return null;
 
-        return BookingShortDto.builder().id(booking.getId()).bookerId(booking.getBooker() != null ? booking.getBooker().getId() : null).build();
+        return BookingShortDto.builder()
+                .id(booking.getId())
+                .bookerId(booking.getBooker() != null ? booking.getBooker().getId() : null)
+                .build();
     }
 }
