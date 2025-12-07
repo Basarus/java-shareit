@@ -1,3 +1,11 @@
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -11,8 +19,7 @@ public class UserGatewayController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Long id,
-                                         @RequestBody UserDto dto) {
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody UserDto dto) {
         return userClient.update(id, dto);
     }
 
