@@ -56,7 +56,7 @@ class ItemRequestControllerTest {
 
         List<ItemRequestDto> responseBody = List.of(r1, r2);
 
-        Mockito.when(itemRequestClient.getUserRequests(1L)).thenReturn(ResponseEntity.ok(responseBody));
+        Mockito.when(itemRequestClient.getOwn(1L)).thenReturn(ResponseEntity.ok(responseBody));
 
         mockMvc.perform(get("/requests").header("X-Sharer-User-Id", 1L)).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(2))).andExpect(jsonPath("$[0].id").value(1L)).andExpect(jsonPath("$[0].description").value("Нужен велосипед")).andExpect(jsonPath("$[1].id").value(2L));
     }
@@ -68,10 +68,11 @@ class ItemRequestControllerTest {
 
         List<ItemRequestDto> responseBody = List.of(r1);
 
-        Mockito.when(itemRequestClient.getAllRequests(1L, 0, 10)).thenReturn(ResponseEntity.ok(responseBody));
+        Mockito.when(itemRequestClient.getAll(1L, 0, 10)).thenReturn(ResponseEntity.ok(responseBody));
 
         mockMvc.perform(get("/requests/all").header("X-Sharer-User-Id", 1L).param("from", "0").param("size", "10")).andExpect(status().isOk()).andExpect(jsonPath("$", hasSize(1))).andExpect(jsonPath("$[0].id").value(10L)).andExpect(jsonPath("$[0].description").value("Нужна дрель"));
     }
+
 
     @Test
     @DisplayName("GET /requests/{id} должен возвращать запрос с вещами")
