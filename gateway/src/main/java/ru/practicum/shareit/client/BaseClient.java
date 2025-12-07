@@ -1,76 +1,69 @@
 package ru.practicum.shareit.client;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
-
-@Slf4j
+@RequiredArgsConstructor
 public class BaseClient {
 
-    protected final RestTemplate rest;
+    private final RestTemplate restTemplate;
 
-    protected BaseClient(RestTemplate rest) {
-        this.rest = rest;
+
+    protected ResponseEntity<Object> get(String path) {
+        return makeAndSendRequest(HttpMethod.GET, path, null, null);
     }
 
-
-    protected <T> ResponseEntity<Object> post(String path, Long userId, T body) {
-        HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders(userId));
-        return rest.exchange(path, HttpMethod.POST, requestEntity, Object.class);
+    protected ResponseEntity<Object> get(String path, Long userId) {
+        return makeAndSendRequest(HttpMethod.GET, path, userId, null);
     }
 
     protected <T> ResponseEntity<Object> post(String path, T body) {
-        return post(path, null, body);
+        return makeAndSendRequest(HttpMethod.POST, path, null, body);
     }
 
+    protected <T> ResponseEntity<Object> post(String path, Long userId, T body) {
+        return makeAndSendRequest(HttpMethod.POST, path, userId, body);
+    }
 
     protected <T> ResponseEntity<Object> patch(String path, Long userId, T body) {
-        HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders(userId));
-        return rest.exchange(path, HttpMethod.PATCH, requestEntity, Object.class);
+        return makeAndSendRequest(HttpMethod.PATCH, path, userId, body);
     }
 
     protected <T> ResponseEntity<Object> patch(String path, T body) {
-        return patch(path, null, body);
+        return makeAndSendRequest(HttpMethod.PATCH, path, null, body);
     }
-
-
-    protected ResponseEntity<Object> get(String path, Long userId) {
-        HttpEntity<Void> requestEntity = new HttpEntity<>(defaultHeaders(userId));
-        return rest.exchange(path, HttpMethod.GET, requestEntity, Object.class);
-    }
-
-    protected ResponseEntity<Object> get(String path) {
-        return get(path, (Long) null);
-    }
-
-    protected ResponseEntity<Object> get(String path, Long userId, Map<String, Object> params) {
-        HttpEntity<Void> requestEntity = new HttpEntity<>(defaultHeaders(userId));
-        return rest.exchange(path, HttpMethod.GET, requestEntity, Object.class, params);
-    }
-
-    protected ResponseEntity<Object> get(String path, Map<String, Object> params) {
-        return get(path, null, params);
-    }
-
 
     protected ResponseEntity<Object> delete(String path, Long userId) {
-        HttpEntity<Void> requestEntity = new HttpEntity<>(defaultHeaders(userId));
-        return rest.exchange(path, HttpMethod.DELETE, requestEntity, Object.class);
+        return makeAndSendRequest(HttpMethod.DELETE, path, userId, null);
     }
 
     protected ResponseEntity<Object> delete(String path) {
-        return delete(path, null);
+        return makeAndSendRequest(HttpMethod.DELETE, path, null, null);
     }
 
-
-    private HttpHeaders defaultHeaders(Long userId) {
+    private <T> ResponseEntity<Object> makeAndSendRequest(
+            HttpMethod method,
+            String path,
+            Long userId,
+            T body
+    ) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
         if (userId != null) {
             headers.add("X-Sharer-User-Id", String.valueOf(userId));
         }
-        return headers;
+
+        HttpEntity<T> requestEntity = new HttpEntity<>(body, headers);
+
+        try {
+            return restTemplate.exchange(path, method, requestEntity, Object.class);
+        } catch (HttpStatusCodeException e) {
+            return ResponseEntity
+                    .status(e.getStatusCode())
+                    .body(e.getResponseBodyAsString());
+        }
     }
 }
