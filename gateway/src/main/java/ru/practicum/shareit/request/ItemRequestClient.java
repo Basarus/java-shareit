@@ -13,13 +13,7 @@ public class ItemRequestClient extends BaseClient {
     private static final String API_PREFIX = "/requests";
 
     public ItemRequestClient(RestTemplateBuilder builder) {
-        super(
-                builder
-                        .uriTemplateHandler(
-                                new DefaultUriBuilderFactory("http://shareit-server:9090" + API_PREFIX)
-                        )
-                        .build()
-        );
+        super(builder.uriTemplateHandler(new DefaultUriBuilderFactory("http://shareit-server:9090" + API_PREFIX)).build());
     }
 
     public ResponseEntity<Object> create(Long userId, ItemRequestDto dto) {

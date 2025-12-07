@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 @RestController
-@RequestMapping("/requests")
+@RequestMapping(path = "/requests")
 @RequiredArgsConstructor
 @Validated
 public class ItemRequestController {
@@ -18,22 +18,22 @@ public class ItemRequestController {
     private final ItemRequestClient itemRequestClient;
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Valid ItemRequestDto dto) {
+    public ResponseEntity<Object> create(@RequestHeader("X-Sharer-User-Id") Long userId, @Valid @RequestBody ItemRequestDto dto) {
         return itemRequestClient.create(userId, dto);
     }
 
     @GetMapping
-    public ResponseEntity<Object> my(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemRequestClient.getUserRequests(userId);
+    public ResponseEntity<Object> getOwn(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemRequestClient.getOwn(userId);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Object> all(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "0") @PositiveOrZero Integer from, @RequestParam(defaultValue = "10") @Positive Integer size) {
-        return itemRequestClient.getAllRequests(userId, from, size);
+    public ResponseEntity<Object> getAll(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam(defaultValue = "0") @PositiveOrZero Integer from, @RequestParam(defaultValue = "10") @Positive Integer size) {
+        return itemRequestClient.getAll(userId, from, size);
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<Object> get(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long requestId) {
+    public ResponseEntity<Object> getById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long requestId) {
         return itemRequestClient.getById(userId, requestId);
     }
 }
