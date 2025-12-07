@@ -17,7 +17,7 @@ public class UserClient extends BaseClient {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + "/users"))
-                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                        .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
                         .build()
         );
     }
@@ -31,14 +31,14 @@ public class UserClient extends BaseClient {
     }
 
     public ResponseEntity<Object> get(Long userId) {
-        return get("/" + userId);
+        return get(Long.valueOf("/" + userId));
     }
 
     public ResponseEntity<Object> getAll() {
-        return get("");
+        return get(Long.valueOf(""));
     }
 
     public ResponseEntity<Object> delete(Long userId) {
-        return delete("/" + userId);
+        return delete(Long.valueOf("/" + userId));
     }
 }

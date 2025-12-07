@@ -17,7 +17,7 @@ public class BookingClient extends BaseClient {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + "/bookings"))
-                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                        .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
                         .build()
         );
     }
